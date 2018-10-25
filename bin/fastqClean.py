@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 
 
 def main():
@@ -19,33 +19,32 @@ if __name__ == "__main__":
         -o,--prefix=<prefix>        ouput prefix
 
         #quality filtering
-        -q,-qual=<quality>          minimum base quality
-        -n,--nbase=<num>            max N-base num
-       
+        -q,-qual=<quality>          minimum base quality [default: 15]
+        --q-percent=<num>           minimum base quality percentage [default: 0.3]
+        -n,--nbase-percent=<num>    max N-base percentage [default: 0.1]
+        
         #length filtering
-        -l,--length=<num>           minimum read length
+        -l,--length=<num>           minimum read length [default: 80]
  
         #overlap filtering 
-        -e,--overlap=<num>          minimum overlapped bases
+        -e,--overlap=<num>          minimum overlapped bases [default:11]
 
         #trimming 
-        --trim1-head=<num>          trim r1 num base from R1 head
-        --trim1-tail=<num>          trim r1 num base from R1 tail
-        --trim2-head=<num>          trim r2 num base from R2 head
-        --trim2-tail=<num>          trim r2 num base from R2 tail
+        --trim1-head=<num>          trim r1 num base from R1 head [default: 0]
+        --trim1-tail=<num>          trim r1 num base from R1 tail [default: 0]
+        --trim2-head=<num>          trim r2 num base from R2 head [default: 0]
+        --trim2-tail=<num>          trim r2 num base from R2 tail [default: 0]
         
         #adapter
-        --adapt1                    adapter1
-        --adapt2                    adapter2
-        --auto-adapt                auto adapt trim throgh r1/r2 overlap 
+        --adapt1                    adapter1 not supported currently
+        --adapt2                    adapter2 not supported currently
+        --auto-adapt                auto adapt trim throgh r1/r2 overlap recommended
 
         #umi format
-        --umi1=<length|file>        umi1 length from 5' or file has umi-barcode of R1-fastq
-        --umi2=<length|file>        umi2 length form 5' or file has umi-barcode of R2-fastq
+        --umi=<length|file>         umi1 length or file has umi-barcode file.
 
         # correction 
-        --diff-score=<socre>        correct base if diff-score more than score.
-
+        --diff-score=<socre>        correct base if diff-score more than score. [default: 20]
 
     """
     args = docopt(usage)
