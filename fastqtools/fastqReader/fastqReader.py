@@ -18,6 +18,7 @@ class fastqReader():
         self.fq2 = open(fq2)
         if fq2.endswith(".gz"):
             self.fq2 = gzip.open(fq2)
+        self.filter=False
 
     def __iter__(self):
         return self

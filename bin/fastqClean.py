@@ -1,9 +1,31 @@
 #!/usr/bin/env python
+import sys
+import os
+curdir  = os.path.dirname(os.path.realpath(__file__))
+sdir = os.path.join(curdir,"../")
+sys.path.append(sdir)
+from multiprocessing import Pool
+from fastqtools.fastqReader.fastqReader import fastqReader
+from fastqtools.fastqReader.fastqWriter import fastqWriter
+from fastqtools.readprocess.readprocess import readprocess
 
+def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
+    r = readprocess(read)
+    r.qual(qual,qual_percent)
+    r.trim(head1,tail1,head2,tail2)
+    r.nbase(n_percent)
+    r.autoadaptremove(auto_adapt)
+    r.umi(umis)
+    r.length(min_length)
+    return r
 
-def main():
-    pass
+def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
 
+    filts = []
+    reads = fastqReader(r1,r2)
+    for read in reads:
+        read = readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length)
+        #fastqWriter(read,prefix)
 
 
 if __name__ == "__main__":
@@ -19,15 +41,15 @@ if __name__ == "__main__":
         -o,--prefix=<prefix>        ouput prefix
 
         #quality filtering
-        -q,-qual=<quality>          minimum base quality [default: 15]
-        --q-percent=<num>           minimum base quality percentage [default: 0.3]
-        -n,--nbase-percent=<num>    max N-base percentage [default: 0.1]
+        --min-qual=<quality>          minimum base quality [default: 15]
+        --min-qual-percent=<num>           minimum base quality percentage [default: 0.3]
+        --max-nbase-percent=<num>    max N-base percentage [default: 0.1]
         
         #length filtering
-        -l,--length=<num>           minimum read length [default: 80]
+        --min-length=<num>           minimum read length [default: 80]
  
         #overlap filtering 
-        -e,--overlap=<num>          minimum overlapped bases [default:11]
+        #--overlap=<num>          minimum overlapped bases [default:11]
 
         #trimming 
         --trim1-head=<num>          trim r1 num base from R1 head [default: 0]
@@ -36,15 +58,28 @@ if __name__ == "__main__":
         --trim2-tail=<num>          trim r2 num base from R2 tail [default: 0]
         
         #adapter
-        --adapt1                    adapter1 not supported currently
-        --adapt2                    adapter2 not supported currently
-        --auto-adapt                auto adapt trim throgh r1/r2 overlap recommended
+        --auto-adapt-trim                auto adapt trim throgh r1/r2 overlap recommended
 
         #umi format
         --umi=<length|file>         umi1 length or file has umi-barcode file.
 
         # correction 
-        --diff-score=<socre>        correct base if diff-score more than score. [default: 20]
+        #--diff-score=<socre>        correct base if diff-score more than score. [default: 20]
 
     """
     args = docopt(usage)
+    print args
+    q1 = args["--r1"]
+    q2 = args["--r2"]
+    prefix = args["--prefix"]
+    qual = int(args["--min-qual"])
+    qual_percent = float(args["--min-qual-percent"])
+    n_percent = float(args["--max-nbase-percent"])
+    min_length = int(args["--min-length"])
+    head1 = int(args["--trim1-head"])
+    head2 = int(args["--trim2-head"])
+    tail1 = int(args["--trim1-tail"])
+    tail2 = int(args["--trim2-tail"])
+    auto_adapt = args["--auto-adapt-trim"]
+    umi = args["--umi"]
+    main(q1,q2,prefix,qual,head1,tail1,head2,tail2,n_percent,auto_adapt,umi,min_length)

@@ -23,6 +23,19 @@ def checkqual(qual,q_thread,percent):
     return 0
 
 
+def checkN(seq,percent):
+    filters = []
+    for q in seq:
+        if q == "N":
+            filters.append(1)
+        else:
+            filters.append(0)
+
+    per = float(filters.count(1))/len(seq)
+
+    if per >= percent:
+        return 1
+    return 0
 
 class dnaseq:
 
@@ -46,3 +59,14 @@ def diffstr(str1,str2):
             continue
         mis = mis + 1
     return mis
+
+
+def checkumi(seq,umis):
+    checklist = []
+    for umi in umis:
+        misnum = diffstr(seq,umi)
+        checklist.append([umi,misnum])
+    checklist = sorted( checklist, key=lambda x:x[0] )    
+    umi,mis = checklist[0]
+    return umi,mis
+

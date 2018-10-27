@@ -1,27 +1,37 @@
 import os
 from tools import code2score,score2code
 from tools import checkqual
+from tools import checkN
 from tools import dnaseq
 from tools import diffstr
 
 class readprocess():
         
-    def __init__(self,r1,r2):
-        self.r1 = r1
-        self.r2 = r2
+    def __init__(self,read):
+        self.r1 = read.r1
+        self.r2 = read.r2
         self.filter = False
 
-    def trim(head1,tail1,head2,tail2):
+    def trim(self,head1,tail1,head2,tail2):
         self.r1.seq = self.r1.seq[head1:]
-        self.r1.qual = self.r1.qual[:-tail]
-        self.r2.seq = self.r2.seq[:head2]
-        self.r2.qual = self.r1.qual[:-tail2]
+        self.r1.seq = self.r1.seq[:(0-tail1-1)]
+        self.r2.seq = self.r2.seq[head2:]
+        self.r2.seq = self.r2.seq[:(0-tail2-1)]
+        self.r1.qual = self.r1.qual[head1:]
+        self.r1.qual = self.r1.qual[:(0-tail1-1)]
+        self.r2.qual = self.r2.qual[head2:]
+        self.r2.qual = self.r2.qual[:(0-tail2-1)]
 
-    def qual(q,percent):
+    def qual(self,q,percent):
         if not checkqual(self.r1.qual,q,percent) or not checkqual(self.r2,qual,q,percent):
             self.filter = True
 
-    def autoadaptremove(self,flag,score):
+    def nbase(self,percent):
+        print self.r1.seq
+        if checkN(self.r1.seq,percent) or checkN(self.r2.seq,percent):
+            self.filter = True 
+
+    def autoadaptremove(self,flag):
         if not flag:
             return
         seed_len = 4 
@@ -57,7 +67,9 @@ class readprocess():
             self.r1.seq  = self.r1.seq[:r1idx+seed_len]
             self.r1.qual = self.r1.qual[:r1idx+seed_len]
 
-    def umi(umis,diffnum):
+    def umi(self,umis):
+        if not umis:
+            return 
         if type(umis) == int:
             umi1 = self.r1.seq[:umis]
             umi2 = self.r2.seq[:umis]
@@ -70,13 +82,16 @@ class readprocess():
             self.r2.qual = self.r2.qual[umis:]
 
         if type(umis) == list:
-            for umi in umis:
-                if diffstr(ck1,umi) <= diffnum:
-                    break
+            umi1,mis1 = checkumi(self.r1.seq,umis)
+            umi2,mis2 = checkumi(self.r2.seq,umis)
+            umistr = "@%s:%s" % (umi1,umi2)
+            self.r1.id = "%s%s" % (umistr,self.r1.id)
+            self.r2.id = "%s%s" % (umistr,self.r2.id)
+            self.r1.seq = self.r1.seq[len(umi1):]
+            self.r1.qual = self.r1.qual[len(umi1):]
+            self.r2.seq = self.r2.seq[len(umi2):]
+            self.r2.qual = self.r2.qual[len(umi2):]
 
-    def merge():
-        pass
-
-    def length(lenMin):
+    def length(self,lenMin):
         if len(self.r1.seq) < lenMin or len(self.r2.seq) < lenMin:
             self.filter = True
