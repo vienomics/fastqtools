@@ -23,11 +23,12 @@ class readprocess():
         self.r2.qual = self.r2.qual[:(0-tail2-1)]
 
     def qual(self,q,percent):
-        if not checkqual(self.r1.qual,q,percent) or not checkqual(self.r2,qual,q,percent):
+        if checkqual(self.r1.qual,q,percent) and  checkqual(self.r2.qual,q,percent):
+            pass
+        else:
             self.filter = True
 
     def nbase(self,percent):
-        print self.r1.seq
         if checkN(self.r1.seq,percent) or checkN(self.r2.seq,percent):
             self.filter = True 
 
@@ -52,7 +53,6 @@ class readprocess():
                     nucl2 = rseq2[r2idx+seed_len+i]
                     nucl1 = self.r1.seq[seed_len+i]
                 except Exception,err:
-                    print err
                     break
                 if nucl1 == nucl2:
                     mat = mat + 1

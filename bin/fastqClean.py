@@ -8,6 +8,7 @@ from multiprocessing import Pool
 from fastqtools.fastqReader.fastqReader import fastqReader
 from fastqtools.fastqReader.fastqWriter import fastqWriter
 from fastqtools.readprocess.readprocess import readprocess
+import os
 
 def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
     r = readprocess(read)
@@ -20,13 +21,18 @@ def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_len
     return r
 
 def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
-
+    i = 0
     filts = []
     reads = fastqReader(r1,r2)
+    tmp_name = "tmp.%s" % os.getpid()
     for read in reads:
         read = readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length)
-        #fastqWriter(read,prefix)
-
+        fastqWriter(read,tmp_name)
+    cmd = "mv %s_R1.fastq %s_R1.clean.fastq" % (tmp_name,prefix)
+    os.system(cmd)
+    cmd = "mv %s_R2.fastq %s_R2.clean.fastq" % (tmp_name,prefix)
+    os.system(cmd)
+    
 
 if __name__ == "__main__":
     from docopt import docopt
@@ -63,12 +69,8 @@ if __name__ == "__main__":
         #umi format
         --umi=<length|file>         umi1 length or file has umi-barcode file.
 
-        # correction 
-        #--diff-score=<socre>        correct base if diff-score more than score. [default: 20]
-
     """
     args = docopt(usage)
-    print args
     q1 = args["--r1"]
     q2 = args["--r2"]
     prefix = args["--prefix"]

@@ -7,7 +7,6 @@ def score2code(score):
     return chr(score + 33)
 
 def checkqual(qual,q_thread,percent):
-    
     filters = []
     for q in qual:
         q = code2score(q)
@@ -16,12 +15,10 @@ def checkqual(qual,q_thread,percent):
         else:
             filters.append(0)
 
-    per = float(filters.count(0))/len(filters)
-
+    per = float(filters.count(1))/len(filters)
     if per >= percent:
         return 1
     return 0
-
 
 def checkN(seq,percent):
     filters = []
@@ -46,10 +43,9 @@ class dnaseq:
 
     @staticmethod
     def complent(seq):
-        comdict = {"A":"T","C":"G","G":"C","T":"A"}
+        comdict = {"A":"T","C":"G","G":"C","T":"A","N":"N"}
         seq = "".join([comdict[s] for s in seq])
         return seq
-
 
 
 def diffstr(str1,str2):
@@ -60,7 +56,6 @@ def diffstr(str1,str2):
         mis = mis + 1
     return mis
 
-
 def checkumi(seq,umis):
     checklist = []
     for umi in umis:
@@ -69,4 +64,3 @@ def checkumi(seq,umis):
     checklist = sorted( checklist, key=lambda x:x[0] )    
     umi,mis = checklist[0]
     return umi,mis
-
