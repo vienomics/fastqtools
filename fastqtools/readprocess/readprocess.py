@@ -40,7 +40,7 @@ class readprocess():
         rseq2 = dnaseq.complent(rseq2)
         rqual2 = dnaseq.reverse(self.r2.qual)
         seed1 = self.r1.seq[:seed_len]
-        seed2 = rseq2[-seed_len:]
+        seed2 = rseq2[-seed_len:].strip("N")
         r2idx = rseq2.find(seed1)
         r1idx = self.r1.seq.rfind(seed2)
         if r2idx == -1 and r1idx == -1:
@@ -58,7 +58,7 @@ class readprocess():
                     mat = mat + 1
                 else:
                     mis = mis + 1
-        if float(mis)/(mat+mis) < 0.05: 
+        if float(mis)/(mat+mis) < 0.05:
             rseq2 = rseq2[r2idx:]
             rqual2 = rqual2[r2idx:]
             self.r2.seq = dnaseq.reverse(dnaseq.complent(rseq2))
