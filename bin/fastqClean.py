@@ -12,12 +12,12 @@ import os
 
 def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
     r = readprocess(read)
-    r.qual(qual,qual_percent)
-    r.trim(head1,tail1,head2,tail2)
-    r.nbase(n_percent)
+    #r.qual(qual,qual_percent)
+    #r.trim(head1,tail1,head2,tail2)
+    #r.nbase(n_percent)
     r.autoadaptremove(auto_adapt)
-    r.umi(umis)
-    r.length(min_length)
+    #r.umi(umis)
+    #r.length(min_length)
     return r
 
 def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
