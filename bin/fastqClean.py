@@ -10,7 +10,7 @@ from fastqtools.fastqReader.fastqWriter import fastqWriter
 from fastqtools.readprocess.readprocess import readprocess
 import os
 
-def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length,tmp_name):
+def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
     r = readprocess(read)
     r.qual(qual,qual_percent)
     r.trim(head1,tail1,head2,tail2)
@@ -18,24 +18,23 @@ def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_len
     r.autoadaptremove(auto_adapt)
     r.umi(umis)
     r.length(min_length)
-    fastqWriter(read,tmp_name)
     return r
 
-def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length,threads):
+def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
     i = 0
     filts = []
     reads = fastqReader(r1,r2)
     tmp_name = "tmp.%s" % os.getpid()
-    pools = Pool(threads)
+    #pools = Pool(threads)
     ps = []
     for read in reads:
-        #read = readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length)
-        #fastqWriter(read,tmp_name)
-        p = pools.apply_async(readclean,(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length,tmp_name))
-        ps.append(p)
+        read = readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length)
+        fastqWriter(read,tmp_name)
+        #p = pools.apply_async(readclean,(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length,tmp_name))
+        #ps.append(p)
 
-    pools.close()
-    pools.join()
+    #pools.close()
+    #pools.join()
 
 
     cmd = "mv %s_R1.fastq %s_R1.clean.fastq" % (tmp_name,prefix)
@@ -55,7 +54,7 @@ if __name__ == "__main__":
         -1,--r1=<fastq>                  R1 fastq         
         -2,--r2=<fastq>                  R2 fastq
         -o,--prefix=<prefix>             ouput prefix
-        -t,--threads=<num>               threads used [default: 1]
+        
         #quality filtering
         --min-qual=<quality>             minimum base quality [default: 15]
         --min-qual-percent=<num>         minimum base quality percentage [default: 0.3]
@@ -84,7 +83,6 @@ if __name__ == "__main__":
     q1 = args["--r1"]
     q2 = args["--r2"]
     prefix = args["--prefix"]
-    threads = int(args["--threads"])
     qual = int(args["--min-qual"])
     qual_percent = float(args["--min-qual-percent"])
     n_percent = float(args["--max-nbase-percent"])
@@ -95,4 +93,4 @@ if __name__ == "__main__":
     tail2 = int(args["--trim2-tail"])
     auto_adapt = args["--auto-adaptor-trim"]
     umi = args["--umi"]
-    main(q1,q2,prefix,qual,head1,tail1,head2,tail2,n_percent,auto_adapt,umi,min_length,threads)
+    main(q1,q2,prefix,qual,head1,tail1,head2,tail2,n_percent,auto_adapt,umi,min_length)
