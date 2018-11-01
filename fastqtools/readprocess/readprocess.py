@@ -35,7 +35,7 @@ class readprocess():
     def autoadaptremove(self,flag):
         if not flag:
             return
-        seed_len = 4 
+        seed_len = 10 
         rseq2 = dnaseq.reverse(self.r2.seq)
         rseq2 = dnaseq.complent(rseq2)
         rqual2 = dnaseq.reverse(self.r2.qual)
