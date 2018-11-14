@@ -11,7 +11,7 @@ class readprocess():
         self.r1 = read.r1
         self.r2 = read.r2
         self.filter = False
-
+        self.adaptor = False
     def trim(self,head1,tail1,head2,tail2):
         self.r1.seq = self.r1.seq[head1:]
         self.r1.qual = self.r1.qual[head1:]
@@ -45,7 +45,8 @@ class readprocess():
         self.r1.qual = self.r1.qual[r1start:r1end]
         self.r2.seq = self.r2.seq[r2start:r2end]
         self.r2.qual = self.r2.qual[r2start:r2end]
-
+        self.adaptor = True
+        
     def umi(self,umis):
         if not umis:
             return 

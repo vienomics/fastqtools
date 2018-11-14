@@ -16,7 +16,6 @@ def checkqual(qual,q_thread,percent):
             filters.append(0)
 
     per = float(filters.count(0))/len(filters)
-    print q_thread,percent,per
     if per >= percent:
         return 0
     return 1
