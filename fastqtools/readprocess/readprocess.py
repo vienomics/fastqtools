@@ -4,7 +4,7 @@ from tools import checkqual
 from tools import checkN
 from tools import dnaseq
 from tools import diffstr
-
+from tools import autocutadaptor
 class readprocess():
         
     def __init__(self,read):
@@ -14,13 +14,15 @@ class readprocess():
 
     def trim(self,head1,tail1,head2,tail2):
         self.r1.seq = self.r1.seq[head1:]
-        self.r1.seq = self.r1.seq[:(0-tail1-1)]
-        self.r2.seq = self.r2.seq[head2:]
-        self.r2.seq = self.r2.seq[:(0-tail2-1)]
         self.r1.qual = self.r1.qual[head1:]
-        self.r1.qual = self.r1.qual[:(0-tail1-1)]
+        if not tail1 == 0:
+            self.r1.seq = self.r1.seq[:(0-tail1)]
+            self.r1.qual = self.r1.qual[:(0-tail1)]
+        self.r2.seq = self.r2.seq[head2:]
         self.r2.qual = self.r2.qual[head2:]
-        self.r2.qual = self.r2.qual[:(0-tail2-1)]
+        if not tail2 == 0:
+            self.r2.seq = self.r2.seq[:(0-tail2)]
+            self.r2.qual = self.r2.qual[:(0-tail2)]
 
     def qual(self,q,percent):
         if checkqual(self.r1.qual,q,percent) and  checkqual(self.r2.qual,q,percent):
@@ -35,37 +37,14 @@ class readprocess():
     def autoadaptremove(self,flag):
         if not flag:
             return
-        seed_len = 10 
-        rseq2 = dnaseq.reverse(self.r2.seq)
-        rseq2 = dnaseq.complent(rseq2)
-        rqual2 = dnaseq.reverse(self.r2.qual)
-        seed1 = self.r1.seq[:seed_len]
-        seed2 = rseq2[-seed_len:].strip("N")
-        r2idx = rseq2.find(seed1)
-        r1idx = self.r1.seq.rfind(seed2)
-        if r2idx == -1 and r1idx == -1:
+        out = autocutadaptor(self.r1.seq,self.r2.seq)
+        if not out:
             return 
-        mis = 0
-        mat = seed_len
-        if r2idx != -1 :
-            for i in range(len(rseq2)):
-                try:
-                    nucl2 = rseq2[r2idx+seed_len+i]
-                    nucl1 = self.r1.seq[seed_len+i]
-                except Exception,err:
-                    break
-                if nucl1 == nucl2:
-                    mat = mat + 1
-                else:
-                    mis = mis + 1
-        if float(mis)/(mat+mis) < 0.05:
-            rseq2 = rseq2[r2idx:]
-            rqual2 = rqual2[r2idx:]
-            self.r2.seq = dnaseq.reverse(dnaseq.complent(rseq2))
-            self.r2.qual = dnaseq.reverse(rqual2)
-        if r1idx != -1:
-            self.r1.seq  = self.r1.seq[:r1idx+seed_len]
-            self.r1.qual = self.r1.qual[:r1idx+seed_len]
+        consus,r1start,r1end,r2start,r2end = out
+        self.r1.seq = self.r1.seq[r1start:r1end]
+        self.r1.qual = self.r1.qual[r1start:r1end]
+        self.r2.seq = self.r2.seq[r2start:r2end]
+        self.r2.qual = self.r2.qual[r2start:r2end]
 
     def umi(self,umis):
         if not umis:

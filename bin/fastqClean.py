@@ -12,12 +12,12 @@ import os
 
 def readclean(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
     r = readprocess(read)
-    #r.qual(qual,qual_percent)
-    #r.trim(head1,tail1,head2,tail2)
-    #r.nbase(n_percent)
+    r.qual(qual,qual_percent)
+    r.trim(head1,tail1,head2,tail2)
+    r.nbase(n_percent)
     r.autoadaptremove(auto_adapt)
-    #r.umi(umis)
-    #r.length(min_length)
+    r.umi(umis)
+    r.length(min_length)
     return r
 
 def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length):
@@ -32,10 +32,8 @@ def main(r1,r2,prefix,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_
         fastqWriter(read,tmp_name)
         #p = pools.apply_async(readclean,(read,qual,head1,tail1,head2,tail2,n_percent,autoadapt,umis,min_length,tmp_name))
         #ps.append(p)
-
     #pools.close()
     #pools.join()
-
 
     cmd = "mv %s_R1.fastq %s_R1.clean.fastq" % (tmp_name,prefix)
     os.system(cmd)
@@ -57,7 +55,7 @@ if __name__ == "__main__":
         
         #quality filtering
         --min-qual=<quality>             minimum base quality [default: 15]
-        --min-qual-percent=<num>         minimum base quality percentage [default: 0.3]
+        --min-qual-max-percent=<num>     minimum base quality max percentage [default: 0.5]
         --max-nbase-percent=<num>        max N-base percentage [default: 0.1]
         
         #length filtering
@@ -84,7 +82,7 @@ if __name__ == "__main__":
     q2 = args["--r2"]
     prefix = args["--prefix"]
     qual = int(args["--min-qual"])
-    qual_percent = float(args["--min-qual-percent"])
+    qual_percent = float(args["--min-qual-max-percent"])
     n_percent = float(args["--max-nbase-percent"])
     min_length = int(args["--min-length"])
     head1 = int(args["--trim1-head"])
