@@ -11,6 +11,7 @@ fastqtools is used to filter , split ,stat raw ngs data.
           :target: http://fastqtools.readthedocs.io/en/latest/?badge=latest
 .. image:: https://travis-ci.org/kongdeju/fastqtools.svg?branch=master
           :target: https://travis-ci.org/vienomics/fastqtools
+
 fastqClean
 ----------
 
