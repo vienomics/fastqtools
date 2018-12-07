@@ -27,4 +27,4 @@ def test_fastqReader2():
 
 
 if __name__ == "__main__":
-    test_fastqReader2()
+    test_fastqReader()
