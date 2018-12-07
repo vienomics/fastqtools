@@ -9,7 +9,7 @@ fastqtools is used to filter , split ,stat raw ngs data.
           :target: https://pypi.python.org/pypi/fastqtools
 .. image:: https://readthedocs.org/projects/fastqtools/badge/?version=latest
           :target: http://fastqtools.readthedocs.io/en/latest/?badge=latest
-.. image:: https://travis-ci.org/kongdeju/fastqtools.svg?branch=master
+.. image:: https://travis-ci.org/vienomics/fastqtools.svg?branch=master
           :target: https://travis-ci.org/vienomics/fastqtools
 
 fastqClean
