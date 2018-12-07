@@ -21,8 +21,8 @@ def test_readprocess():
     f.r2.seq  = "CCGGTTTTAATTAGC"
     f.r2.qual = "FFFFFFFF//////"
 
-    rp = readprocess(f.r1,f.r2)
-    rp.autoadaptremove(True,0)
+    rp = readprocess(f)
+    rp.autoadaptremove(True)
     print rp.r1.seq,rp.r2.seq
     print rp.r1.qual,rp.r2.qual
 if __name__ == "__main__":
